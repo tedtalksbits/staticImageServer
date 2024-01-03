@@ -35,17 +35,19 @@ export async function createImageFolder() {
   }
 
   // commit the image to github
-  exec(
-    `git add . && git commit -m "add image ${timestamp}" && git push origin master`,
-    (err, stdout, stderr) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      console.log(stdout);
-      console.log(stderr);
+  const command = `
+  git add --all; \
+  git commit -m "Add image ${timestamp}"; \
+  git push origin master});
+`;
+  exec(command, (err, stdout, stderr) => {
+    if (err) {
+      console.error(err);
+      return;
     }
-  );
+    console.log(stdout);
+    console.log(stderr);
+  });
 }
 
 async function downloadImage(url, folder) {
@@ -70,19 +72,16 @@ async function downloadImage(url, folder) {
     });
 }
 
-async function copyImage(path) {
-  console.log(path);
+async function copyImage(imgPath) {
+  console.log(imgPath);
   // copy image to folder
-  // const name = path.split('/').pop();
-  // const options = {
-  //   src: path,
-  //   dest: path.resolve(folder, name),
-  // };
+  const name = imgPath.split('\\').pop();
+  console.log(name);
 
-  // return fs.copyFile(options.src, options.dest, (err) => {
-  //   if (err) throw err;
-  //   console.log('The image was copied to the folder');
-  // });
+  return fs.copyFile(imgPath, path.resolve(folder, name), (err) => {
+    if (err) throw err;
+    console.log('The image was copied to the folder');
+  });
 }
 
 function validImage(url) {
