@@ -38,7 +38,7 @@ export async function createImageFolder() {
   const command = `
   git add --all; \
   git commit -m "Add image ${timestamp}"; \
-  git push origin master});
+  git push origin main});
 `;
   exec(command, (err, stdout, stderr) => {
     if (err) {
