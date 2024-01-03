@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 
 // get the url from the command line
 const url = minimist(process.argv).url;
+const local = minimist(process.argv).local;
 console.log(url);
 
 // create folder for images if it doesn't exist
@@ -27,8 +28,11 @@ export async function createImageFolder() {
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
   }
-
-  await downloadImage(url, folder);
+  if (!local) {
+    await downloadImage(url, folder);
+  } else {
+    await copyImage(url, folder);
+  }
 
   // commit the image to github
   exec(
@@ -64,6 +68,21 @@ async function downloadImage(url, folder) {
     .catch((err) => {
       console.error(err);
     });
+}
+
+async function copyImage(path) {
+  console.log(path);
+  // copy image to folder
+  // const name = path.split('/').pop();
+  // const options = {
+  //   src: path,
+  //   dest: path.resolve(folder, name),
+  // };
+
+  // return fs.copyFile(options.src, options.dest, (err) => {
+  //   if (err) throw err;
+  //   console.log('The image was copied to the folder');
+  // });
 }
 
 function validImage(url) {
