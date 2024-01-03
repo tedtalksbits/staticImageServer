@@ -31,11 +31,7 @@ export async function createImageFolder() {
   if (!local) {
     downloadImage(url, folder).then(() => {
       // commit the image to github
-      const command = `
-      git add --all; \
-      git commit -m "Add image ${timestamp}"; \
-      git push origin main});
-    `;
+      const command = `git add .\n git commit -m "Add image ${timestamp}"\n git push origin main`;
       exec(command, (err, stdout, stderr) => {
         if (err) {
           console.error(err);
@@ -48,11 +44,7 @@ export async function createImageFolder() {
   } else {
     copyImage(url, folder).then(() => {
       // commit the image to github
-      const command = `
-      git add --all; \
-      git commit -m "Add image ${timestamp}"; \
-      git push origin main});
-    `;
+      const command = `git add . && git commit -m "Add image ${timestamp}" && git push origin main`;
       exec(command, (err, stdout, stderr) => {
         if (err) {
           console.error(err);
