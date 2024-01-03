@@ -29,25 +29,40 @@ export async function createImageFolder() {
     fs.mkdirSync(folder);
   }
   if (!local) {
-    await downloadImage(url, folder);
+    downloadImage(url, folder).then(() => {
+      // commit the image to github
+      const command = `
+      git add --all; \
+      git commit -m "Add image ${timestamp}"; \
+      git push origin main});
+    `;
+      exec(command, (err, stdout, stderr) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log(stdout);
+        console.log(stderr);
+      });
+    });
   } else {
-    await copyImage(url, folder);
+    copyImage(url, folder).then(() => {
+      // commit the image to github
+      const command = `
+      git add --all; \
+      git commit -m "Add image ${timestamp}"; \
+      git push origin main});
+    `;
+      exec(command, (err, stdout, stderr) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log(stdout);
+        console.log(stderr);
+      });
+    });
   }
-
-  // commit the image to github
-  const command = `
-  git add --all; \
-  git commit -m "Add image ${timestamp}"; \
-  git push origin main});
-`;
-  exec(command, (err, stdout, stderr) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log(stdout);
-    console.log(stderr);
-  });
 }
 
 async function downloadImage(url, folder) {
@@ -64,7 +79,7 @@ async function downloadImage(url, folder) {
       console.log('Saved to', filename);
       console.log(
         'The image is at',
-        `https://raw.githubusercontent.com/tedtalksbits/static-images/master/images/v2/${timestamp}/`
+        `https://raw.githubusercontent.com/tedtalksbits/staticImageServer/main/images/${timestamp}/${name}`
       );
     })
     .catch((err) => {
@@ -81,6 +96,10 @@ async function copyImage(imgPath) {
   return fs.copyFile(imgPath, path.resolve(folder, name), (err) => {
     if (err) throw err;
     console.log('The image was copied to the folder');
+    console.log(
+      'The image is at',
+      `https://raw.githubusercontent.com/tedtalksbits/staticImageServer/main/images/${timestamp}/${name}`
+    );
   });
 }
 
